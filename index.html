@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bentham&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <title>Sorting</title>
+</head>
+<body>
+    <header>
+        <ul class="algorithms">
+            <li><button onclick="insertionSortBars(bars)">Insertion Sort</button></li>
+            <li><button onclick="heights = makeHeightsList(bars); heights = mergeSort(heights); listToBars(heights, bars);">Merge Sort</button></li>
+            <li><button>Bubble Sort</button></li>
+            <li><button>Quick Sort</button></li>
+            <li><button>Bogo Sort</button></li>
+        </ul>
+    </header>
+    <main>
+        <div id="wrapper"></div>
+        <div class="slide-container">
+            <input type="range" min="8" max="200" value="50" id="slider">
+        </div>
+        
+    </main>
+    
+    
+</body>
+    <script src="script.js"></script>
+</html>
