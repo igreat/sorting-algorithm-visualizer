@@ -1,63 +1,62 @@
 body {
-    margin: 0;
-    font-family: "Fira Code";
-    background-color: #EEEDDE;
+  margin: 0;
+  font-family: "Fira Code";
+  background-color: #eeedde;
 }
 
 header {
-    display: grid;
-    height: 100px;
-    background: #203239;
-    justify-content: center;
+  display: grid;
+  height: 100px;
+  background: #203239;
+  justify-content: center;
 }
 
 header ul {
-    padding: 0;
-    list-style: none;
-    
+  padding: 0;
+  list-style: none;
 }
 
 header ul li {
-    display: inline-block;
+  display: inline-block;
 }
 
 header ul li button {
-    border: none;
-    background-color: rgba(255, 255, 255, 0.1);
-    padding: 20px 50px;
-    color: white;
-    font-family: "Fira Code";
-    font-size: 16px;
-    font-weight: bold;
-    text-decoration: none;
+  border: none;
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 20px 50px;
+  color: white;
+  font-family: "Fira Code";
+  font-size: 16px;
+  font-weight: bold;
+  text-decoration: none;
 }
 
 main {
-    display: grid;
-    justify-content: center;
+  display: grid;
+  justify-content: center;
 }
 
 #wrapper {
-    display: flex;
-    flex-direction: row;
-    background-color: #f7f7e7;
-    height: 400px;
-    width: 1000px;
-    border-radius: 10px;
-    margin: auto;
-    margin-top: 10px;
+  display: flex;
+  flex-direction: row;
+  background-color: #f7f7e7;
+  height: 400px;
+  width: 1000px;
+  border-radius: 10px;
+  margin: auto;
+  margin-top: 10px;
+  align-items: flex-end;
 }
 
 .array {
-    background-color: #141E27;
+  background-color: #141e27;
 }
 
 .slide-container {
-    display: grid;
-    justify-content: center;
+  display: grid;
+  justify-content: center;
 }
 
 #slider {
-    width: 200px;
-
+  width: 200px;
 }

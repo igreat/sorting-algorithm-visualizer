@@ -58,10 +58,9 @@ function getHeightsList(barList) {
 function selectionSortVisualize(barList) {
     resetBars();
     let i = 0;
-    let j = 0;
+    let j = 1;
     let bar1 = barList[i];
     let minBar = bar1;
-    let colorSwitched = false;
     frames = setInterval(() => {
         if (i >= barList.length) {
             clearInterval(frames);
@@ -73,23 +72,18 @@ function selectionSortVisualize(barList) {
             if (getHeight(bar2) < getHeight(minBar)) {
                 minBar = bar2;
             }
-            if (!colorSwitched) {
-                barList[j].style.backgroundColor = "red";
-                colorSwitched = true;
-            } else {
-                barList[j].style.backgroundColor = "#141E27";
-                colorSwitched = false;
-                j++;
-            }
-        } else {
-            const temp = bar1.style.height;
-            bar1.style.height = minBar.style.height;
-            minBar.style.height = temp;
-            bar1 = barList[i];
-            minBar = bar1;
-            i++;
-            j = i;
+            barList[j - 1].style.backgroundColor = "#141e27";
+            barList[j++].style.backgroundColor = "red";
+            return;
         }
+        barList[j - 1].style.backgroundColor = "#141e27";
+        const temp = bar1.style.height;
+        bar1.style.height = minBar.style.height;
+        minBar.style.height = temp;
+        bar1 = barList[i];
+        minBar = bar1;
+        i++;
+        j = i;
 
     }, 5);
 }
@@ -151,7 +145,7 @@ function mergeSortVisualize(barList) {
     const animationList = getAnimationListMergeSort(heights.slice());
     let i = 0;
     let j = 0;
-    let colorSwitched = false;
+    let previousTwoBars = [];
     frames = setInterval(() => {
         if (i >= animationList.length) {
             clearInterval(frames);
@@ -159,18 +153,13 @@ function mergeSortVisualize(barList) {
         }
         if (j === 0) {
             const [barOneIndex, barTwoIndex] = animationList[i][j];
-            if (!colorSwitched) {
-                barList[barOneIndex].style.backgroundColor = "red";
-                barList[barTwoIndex].style.backgroundColor = "red";
-                colorSwitched = true;
-            } else {
-                barList[barOneIndex].style.backgroundColor = "#141E27";
-                barList[barTwoIndex].style.backgroundColor = "#141E27";
-                j++;
-                colorSwitched = false;
-            }
-
+            barList[barOneIndex].style.backgroundColor = "red";
+            barList[barTwoIndex].style.backgroundColor = "red";
+            previousTwoBars = [barList[barOneIndex], barList[barTwoIndex]];
+            j++;
         } else {
+            previousTwoBars[0].style.backgroundColor = "#141e27";
+            previousTwoBars[1].style.backgroundColor = "#141e27";
             const [barIndex, newHeight] = animationList[i][j];
             barList[barIndex].style.height = `${newHeight}%`;
             i++;
