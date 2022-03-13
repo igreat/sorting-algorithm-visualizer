@@ -61,7 +61,7 @@ function selectionSortVisualize(barList) {
     let j = 1;
     let bar1 = barList[i];
     let minBar = bar1;
-    frames = setInterval(() => {
+    let frames = setInterval(() => {
         if (i >= barList.length) {
             clearInterval(frames);
             return;
@@ -146,7 +146,7 @@ function mergeSortVisualize(barList) {
     let i = 0;
     let j = 0;
     let previousTwoBars = [];
-    frames = setInterval(() => {
+    let frames = setInterval(() => {
         if (i >= animationList.length) {
             clearInterval(frames);
             return;
@@ -166,6 +166,91 @@ function mergeSortVisualize(barList) {
             j = 0;
         } 
     }, 5)
+}
+
+function quickSortVisualize(barList) {
+    resetBars();
+    const heights = getHeightsList(barList);
+    const animationList = getAnimationsQuickSort(heights);
+    let i = 0;
+    let j = 0;
+    let swap = false;
+    const frames = setInterval(() => {
+        if (i >= animationList.length) {
+            clearInterval(frames);
+            return;
+        }
+
+        const animation = animationList[i];
+        if (j === 0) {
+            barIndex = animation[j];
+            barList[barIndex].style.backgroundColor = "red";
+            j++;
+            return;
+        } 
+        
+        if (animation[j]) {
+            const [barOneIndex, barTwoIndex] = animation[j];
+            if (!swap) {
+                barList[barOneIndex].style.backgroundColor = "red";
+                barList[barTwoIndex].style.backgroundColor = "red";
+                swap = true;
+            } else {
+                const temp = barList[barOneIndex].style.height ;
+                barList[barOneIndex].style.height = barList[barTwoIndex].style.height;
+                barList[barTwoIndex].style.height = temp;
+                barList[barOneIndex].style.backgroundColor = "#141e27";
+                barList[barTwoIndex].style.backgroundColor = "#141e27";
+                swap = false;
+                j = 0;
+                i++;
+            }
+   
+        } else {
+            prevAnimation = animationList[i-1];
+            barList[barIndex].style.backgroundColor = "#141e27";
+            i++;
+        }
+    }, 5);
+}
+
+function getAnimationsQuickSort(list) {
+    let animationList = [];
+    quickSort(list.slice(), 0, list.length, animationList);
+    return animationList;
+}
+
+function quickSort(list, left, right, animationList) {
+    if (right - left <= 1) return;
+
+    let p = partition(list, left, right, animationList);
+    quickSort(list, left, p, animationList);
+    quickSort(list, p + 1, right, animationList);
+    
+}
+
+function partition(list, left, right, animationList) {
+    let pivot = list[right - 1];
+    let i = left - 1
+    for (let j = left; j < right; j++) {
+        const animation = [];
+        animation.push(j);
+        if (list[j] < pivot) {
+            i++;
+            const temp = list[i];
+            list[i] = list[j];
+            list[j] = temp;
+            animation.push([i, j]);
+        }
+        animationList.push(animation);
+    }
+    const animation = [];
+    animation.push(right - 1);
+    list[right - 1] = list[i + 1];
+    list[i + 1] = pivot;
+    animation.push([i + 1, right - 1]);
+    animationList.push(animation);
+    return i + 1;
 }
 
 
