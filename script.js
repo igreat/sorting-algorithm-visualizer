@@ -54,41 +54,27 @@ function getHeightsList(barList) {
     return heights;
 }
 
-// THIS NEEDS A REDO TO INCLUDE ALL STEPS!
-function selectionSortVisualize(barList) {
-    resetBars();
-    let i = 0;
-    let j = 1;
-    let bar1 = barList[i];
-    let minBar = bar1;
-    let frames = setInterval(() => {
-        if (i >= barList.length) {
-            clearInterval(frames);
-            return;
-        }
-        const bar2 = barList[j];
 
-        if (j < barList.length) {
-            if (getHeight(bar2) < getHeight(minBar)) {
-                minBar = bar2;
+function getAnimationsSelectionSort(list) {
+    let animationList = [];
+    for (let i = 0; i < list.length - 1; i++) {
+        let minIndex = i + 1;
+        for (let j = i; j < list.length; j++) {
+            if (list[j] < list[minIndex]) {
+                minIndex = j;
             }
-            barList[j - 1].style.backgroundColor = "#141e27";
-            barList[j++].style.backgroundColor = "red";
-            return;
+            animationList.push(["highlight", [j]]);
         }
-        barList[j - 1].style.backgroundColor = "#141e27";
-        const temp = bar1.style.height;
-        bar1.style.height = minBar.style.height;
-        minBar.style.height = temp;
-        bar1 = barList[i];
-        minBar = bar1;
-        i++;
-        j = i;
-
-    }, 5);
+        const temp = list[minIndex];
+        list[minIndex] = list[i];
+        list[i] = temp;
+        animationList.push(["swap", [i, minIndex]]);
+    }
+    console.log(list);
+    return animationList;
 }
 
-function getAnimationListMergeSort(list) {
+function getAnimationsMergeSort(list) {
     const animationList = [];
     const listCopy = list.slice();
     mergeSort(list, listCopy, 0, list.length, animationList);
@@ -112,111 +98,96 @@ function merge(mainList, helperList, start, mid, end, animationList) {
     let j = mid;
 
     while (i < mid && j < end) {
-        const animation = [];
-        animation.push([i, j]);
+        animationList.push(["highlight", [i, j]]);
         if (helperList[i] <= helperList[j]) {
-            animation.push([k, helperList[i]]);
+            animationList.push(["insert", [k, helperList[i]]]);
             mainList[k++] = helperList[i++];
         } else {
-            animation.push([k, helperList[j]]);
+            animationList.push(["insert", [k, helperList[j]]]);
             mainList[k++] = helperList[j++];
         }
-        animationList.push(animation);
     }
 
     while (i < mid) {
-        const animation = [];
-        animation.push([i, i], [k, helperList[i]]);
+        animationList.push(
+            ["highlight", [i, i]], ["insert", [k, helperList[i]]]
+            );
         mainList[k++] = helperList[i++];
-        animationList.push(animation);
     }
 
     while (j < end) {
-        const animation = [];
-        animation.push([j, j], [k, helperList[j]]);
+        animationList.push(
+            ["highlight", [j, j]], ["insert", [k, helperList[j]]]
+            );
         mainList[k++] = helperList[j++];
-        animationList.push(animation);
     }
 }
 
-function mergeSortVisualize(barList) {
+function visualize(getAnimations, barList) {
     resetBars();
     const heights = getHeightsList(barList);
-    const animationList = getAnimationListMergeSort(heights.slice());
+    const animationList = getAnimations(heights);
     let i = 0;
-    let j = 0;
-    let previousTwoBars = [];
-    let frames = setInterval(() => {
-        if (i >= animationList.length) {
-            clearInterval(frames);
-            return;
-        }
-        if (j === 0) {
-            const [barOneIndex, barTwoIndex] = animationList[i][j];
-            barList[barOneIndex].style.backgroundColor = "red";
-            barList[barTwoIndex].style.backgroundColor = "red";
-            previousTwoBars = [barList[barOneIndex], barList[barTwoIndex]];
-            j++;
-        } else {
-            previousTwoBars[0].style.backgroundColor = "#141e27";
-            previousTwoBars[1].style.backgroundColor = "#141e27";
-            const [barIndex, newHeight] = animationList[i][j];
-            barList[barIndex].style.height = `${newHeight}%`;
-            i++;
-            j = 0;
-        } 
-    }, 5)
-}
-
-function quickSortVisualize(barList) {
-    resetBars();
-    const heights = getHeightsList(barList);
-    const animationList = getAnimationsQuickSort(heights);
-    let i = 0;
-    let j = 0;
-    let swap = false;
+    let mustDehighlight = false;
+    let toDehighlight = [];
     const frames = setInterval(() => {
         if (i >= animationList.length) {
             clearInterval(frames);
             return;
         }
-
-        const animation = animationList[i];
-        if (j === 0) {
-            barIndex = animation[j];
-            barList[barIndex].style.backgroundColor = "red";
-            j++;
-            return;
-        } 
-        
-        if (animation[j]) {
-            const [barOneIndex, barTwoIndex] = animation[j];
-            if (!swap) {
-                barList[barOneIndex].style.backgroundColor = "red";
-                barList[barTwoIndex].style.backgroundColor = "red";
-                swap = true;
-            } else {
-                const temp = barList[barOneIndex].style.height ;
-                barList[barOneIndex].style.height = barList[barTwoIndex].style.height;
-                barList[barTwoIndex].style.height = temp;
-                barList[barOneIndex].style.backgroundColor = "#141e27";
-                barList[barTwoIndex].style.backgroundColor = "#141e27";
-                swap = false;
-                j = 0;
-                i++;
+        if (mustDehighlight) {
+            for (const j of toDehighlight) {
+                if ((getHeight(barList[j]) === heights[j])) {
+                    barList[j].style.backgroundColor = "green";
+                } else {
+                    barList[j].style.backgroundColor = "#141e27";
+                }
             }
-   
-        } else {
-            prevAnimation = animationList[i-1];
-            barList[barIndex].style.backgroundColor = "#141e27";
-            i++;
+            mustDehighlight = false;
+            toDehighlight = [];
         }
+        switch (animationList[i][0]) {
+            case "highlight":
+                for (const j of animationList[i][1]) {
+                    barList[j].style.backgroundColor = "red";
+                }
+
+                mustDehighlight = true;
+                toDehighlight.push(...animationList[i][1]);
+                break;
+            case "swap":
+                const [first, second] = animationList[i][1];
+                const temp = barList[first].style.height ;
+                barList[first].style.height = barList[second].style.height;
+                barList[second].style.height = temp;
+                barList[first].style.backgroundColor = "red";
+                barList[second].style.backgroundColor = "red";
+
+                mustDehighlight = true;
+                toDehighlight.push(...animationList[i][1]);
+                break;
+            case "insert":
+                const [j, newHeight] = animationList[i][1];
+                barList[j].style.height = `${newHeight}%`;
+
+                if (getHeight(barList[j]) === heights[j]) {
+                    barList[j].style.backgroundColor = "green";
+                    break;
+                }
+                barList[j].style.backgroundColor = "red";
+                mustDehighlight = true;
+                toDehighlight.push(j);
+                break;
+            default:
+                console.log("INVALID ANIMATION TYPE");
+        }
+        i++;
     }, 5);
 }
 
 function getAnimationsQuickSort(list) {
     let animationList = [];
-    quickSort(list.slice(), 0, list.length, animationList);
+    quickSort(list, 0, list.length, animationList);
     return animationList;
 }
 
@@ -230,27 +201,48 @@ function quickSort(list, left, right, animationList) {
 }
 
 function partition(list, left, right, animationList) {
+    // sorting the three positions (left, mid, right)
+    const mid = Math.floor((right + left) / 2);
+    const triplet = [left, mid, right - 1];
+    let min = list[left];
+    for (let i = 0; i < 3; i++) {
+        for (let j = i; j < 3; j++) {
+            if (list[triplet[j] < min]) {
+                const temp = min;
+                min = list[triplet[j]];
+                list[triplet[j]] = temp;
+            }
+        }
+    }
+    
+    const temp = list[right - 1];
+    list[right - 1] = list[mid];
+    list[mid] = temp;
+
+    animationList.push(
+        ["highlight", [mid]], 
+        ["highlight", [mid, right - 1]],
+        ["swap", [mid, right - 1]]
+        );
+
     let pivot = list[right - 1];
     let i = left - 1
     for (let j = left; j < right; j++) {
-        const animation = [];
-        animation.push(j);
+        animationList.push(["highlight", [j]]);
         if (list[j] < pivot) {
             i++;
             const temp = list[i];
             list[i] = list[j];
             list[j] = temp;
-            animation.push([i, j]);
+            animationList.push(["highlight", [i, j]]);
+            animationList.push(["swap", [i, j]]);
         }
-        animationList.push(animation);
     }
-    const animation = [];
-    animation.push(right - 1);
+    animationList.push(["highlight", [right - 1]]);
     list[right - 1] = list[i + 1];
     list[i + 1] = pivot;
-    animation.push([i + 1, right - 1]);
-    animationList.push(animation);
+    animationList.push(["highlight", [i + 1, right - 1]]);
+    animationList.push(["swap", [i + 1, right - 1]]);
     return i + 1;
 }
-
 
