@@ -204,12 +204,14 @@ function partition(list, left, right, animationList) {
     // sorting the three positions (left, mid, right)
     const mid = Math.floor((right + left) / 2);
     const triplet = [left, mid, right - 1];
-    let min = list[left];
     for (let i = 0; i < 3; i++) {
+        let minIndex = i;
         for (let j = i; j < 3; j++) {
-            if (list[triplet[j] < min]) {
-                const temp = min;
-                min = list[triplet[j]];
+            animationList.push("highlight", [j]);
+            if (list[triplet[j] < list[minIndex]]) {
+                animationList.push("swap", [i, j])
+                const temp = list[minIndex];
+                list[minIndex] = list[triplet[j]];
                 list[triplet[j]] = temp;
             }
         }
@@ -246,3 +248,46 @@ function partition(list, left, right, animationList) {
     return i + 1;
 }
 
+
+function heapify(heap, i, heapLength) {
+    let left = 2*i;
+    let right = 2*i + 1;
+
+    let max = i;
+    if (left <= heapLength && heap[left] > heap[i]) {
+        max = left;
+    }
+
+    if (right <= heapLength && heap[right] > heap[max]) {
+        max = right;
+    }
+
+    if (max != i) {
+        const temp = heap[i];
+        heap[i] = heap[max];
+        heap[max] = temp;
+
+        heapify(heap, max, heapLength);
+    }
+}
+
+function buildMaxHeap(list, heapLength) {
+    for (let i = Math.floor(heapLength / 2); i >= 0; i--) {
+        heapify(list, i, heapLength)
+    }
+}
+
+function heapSort(list) {
+    heapLength = list.length;
+    buildMaxHeap(list, heapLength);
+
+    for (let i = heapLength - 1; i >= 0; i--) {
+        const temp = list[0];
+        list[0] = list[i];
+        list[i] = temp;
+
+        heapLength--;
+        heapify(list, 0, heapLength);
+    }
+}
+ 
