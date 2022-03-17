@@ -70,7 +70,6 @@ function getAnimationsSelectionSort(list) {
         list[i] = temp;
         animationList.push(["swap", [i, minIndex]]);
     }
-    console.log(list);
     return animationList;
 }
 
@@ -162,7 +161,6 @@ function visualize(getAnimations, barList) {
                 barList[second].style.height = temp;
                 barList[first].style.backgroundColor = "red";
                 barList[second].style.backgroundColor = "red";
-
                 mustDehighlight = true;
                 toDehighlight.push(...animationList[i][1]);
                 break;
@@ -207,7 +205,7 @@ function partition(list, left, right, animationList) {
     for (let i = 0; i < 3; i++) {
         let minIndex = i;
         for (let j = i; j < 3; j++) {
-            animationList.push("highlight", [j]);
+            animationList.push(["highlight", [j]]);
             if (list[triplet[j] < list[minIndex]]) {
                 animationList.push("swap", [i, j])
                 const temp = list[minIndex];
@@ -249,17 +247,19 @@ function partition(list, left, right, animationList) {
 }
 
 
-function heapify(heap, i, heapLength) {
+function heapify(heap, i, heapLength, animationList) {
     while (true) {
         let left = 2*i;
         let right = 2*i + 1;
-    
+        
         let max = i;
         if (left <= heapLength && heap[left] > heap[i]) {
+            animationList.push(["highlight", [i, left]]);
             max = left;
         }
     
         if (right <= heapLength && heap[right] > heap[max]) {
+            animationList.push(["highlight", [max, right]]);
             max = right;
         }
     
@@ -267,29 +267,34 @@ function heapify(heap, i, heapLength) {
             const temp = heap[i];
             heap[i] = heap[max];
             heap[max] = temp;
+            animationList.push(["swap", [i, max]]);
             i = max;
+        
         } else {
             break;
         }
     }
 }
 
-function buildMaxHeap(list, heapLength) {
+function buildMaxHeap(list, heapLength, animationList) {
     for (let i = Math.floor(heapLength / 2); i >= 0; i--) {
-        heapify(list, i, heapLength)
+        heapify(list, i, heapLength, animationList)
     }
 }
 
-function heapSort(list, heapLength) {
+function getAnimationsHeapSort(list, heapLength, animationList) {
+    animationList = [];
     heapLength = list.length;
-    buildMaxHeap(list, heapLength);
+    buildMaxHeap(list, heapLength, animationList);
     for (let i = heapLength - 1; i >= 0; i--) {
 
         heapLength--;
-        heapify(list, 0, heapLength);
+        heapify(list, 0, heapLength, animationList);
         const temp = list[0];
         list[0] = list[i];
         list[i] = temp;
-
+        
+        animationList.push(["swap", [0, i]]);
     }
+    return animationList;
 }
