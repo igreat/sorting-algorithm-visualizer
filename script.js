@@ -250,24 +250,27 @@ function partition(list, left, right, animationList) {
 
 
 function heapify(heap, i, heapLength) {
-    let left = 2*i;
-    let right = 2*i + 1;
-
-    let max = i;
-    if (left <= heapLength && heap[left] > heap[i]) {
-        max = left;
-    }
-
-    if (right <= heapLength && heap[right] > heap[max]) {
-        max = right;
-    }
-
-    if (max != i) {
-        const temp = heap[i];
-        heap[i] = heap[max];
-        heap[max] = temp;
-
-        heapify(heap, max, heapLength);
+    while (true) {
+        let left = 2*i;
+        let right = 2*i + 1;
+    
+        let max = i;
+        if (left <= heapLength && heap[left] > heap[i]) {
+            max = left;
+        }
+    
+        if (right <= heapLength && heap[right] > heap[max]) {
+            max = right;
+        }
+    
+        if (max != i) {
+            const temp = heap[i];
+            heap[i] = heap[max];
+            heap[max] = temp;
+            i = max;
+        } else {
+            break;
+        }
     }
 }
 
@@ -277,17 +280,16 @@ function buildMaxHeap(list, heapLength) {
     }
 }
 
-function heapSort(list) {
+function heapSort(list, heapLength) {
     heapLength = list.length;
     buildMaxHeap(list, heapLength);
-
     for (let i = heapLength - 1; i >= 0; i--) {
+
+        heapLength--;
+        heapify(list, 0, heapLength);
         const temp = list[0];
         list[0] = list[i];
         list[i] = temp;
 
-        heapLength--;
-        heapify(list, 0, heapLength);
     }
 }
- 
