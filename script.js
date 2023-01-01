@@ -262,17 +262,16 @@ function heapify(heap, i, heapLength, animationList) {
             animationList.push(["highlight", [max, right]]);
             max = right;
         }
-    
-        if (max != i) {
-            const temp = heap[i];
-            heap[i] = heap[max];
-            heap[max] = temp;
-            animationList.push(["swap", [i, max]]);
-            i = max;
         
-        } else {
+        if (max === i) {
             break;
         }
+
+        const temp = heap[i];
+        heap[i] = heap[max];
+        heap[max] = temp;
+        animationList.push(["swap", [i, max]]);
+        i = max;
     }
 }
 
